@@ -13,9 +13,38 @@
  //You can worry about making it look nice, adding menus, and everything else once the base game is completed.
 
 import javax.swing.*;
+import javax.swing.border.*;
+
+import java.awt.*;
+import java.awt.event.*;
+
 import java.util.Random;
 
-public class TicTacToe{
+public class TicTacToe extends JPanel{
+
+    public TicTacToe(){
+        JPanel panel = new JPanel();
+        panel.setSize(620, 620);
+        //JLabel label = new JLabel("Test Label!");
+        //panel.add(label);
+        add(panel);
+    }
+
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        drawGameBoard(g);
+    }
+
+    public void drawGameBoard(Graphics g){
+        /* Horizontal lines */
+        g.drawLine(20, 180, 580, 180);
+        g.drawLine(20, 380, 580, 380);
+        /* Vertical lines*/
+        g.drawLine(200, 20, 200, 560);
+        g.drawLine(400, 20, 400, 560);
+    }
+
     public static void main(String[] args){
         newGame();//once you have a GUI make a button 'New Game' that calls this.
     }
@@ -52,11 +81,10 @@ public class TicTacToe{
     public static void setUpGUI() {
         JFrame frame = new JFrame("Tic Tac Toe");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(600, 400);
+        frame.setSize(600, 600);
  
-        JLabel label = new JLabel("Test Label!");
-        frame.getContentPane().add(label);
-
+        //JLabel label = new JLabel("Test Label!");
+        frame.getContentPane().add(new TicTacToe());
  
         //frame.pack();
         frame.setVisible(true);

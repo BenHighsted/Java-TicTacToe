@@ -7,6 +7,11 @@
  * 
  */
 
+ //The next step for this project is to setup the graphics.
+ //For a start, the best way is to make the program launch and the game starts (so all that is shown is the game board)
+ //Then you play a game, and the game ends.
+ //You can worry about making it look nice, adding menus, and everything else once the base game is completed.
+
 import javax.swing.*;
 import java.util.Random;
 
@@ -19,12 +24,15 @@ public class TicTacToe{
         int Move = 0;
 
         String[] GameState = {
-        "null", "null", "null", 
+        "X", "X", "X", 
         "null", "null", "null", 
         "null", "null", "null"}; //Thinking i'll use this array to hold the state of the game.
         //With this i can say that GameState[0] == GameState[4] == GameState[8] is a game over (3 in a row)
-
+        
         boolean playerOneTurn = firstMove();
+
+        //This is here currently just to test all the states. Will need to be called after every move when the GUI is set up.
+        checkWinConditions(GameState);
 
         setUpGUI();//once all the game variables are set up, we initiate the GUI.
     }
@@ -48,6 +56,7 @@ public class TicTacToe{
  
         JLabel label = new JLabel("Test Label!");
         frame.getContentPane().add(label);
+
  
         //frame.pack();
         frame.setVisible(true);
@@ -57,32 +66,60 @@ public class TicTacToe{
     public static void checkWinConditions(String[] GameState){
         /** Rows */
         if(GameState[0] == GameState[1] && GameState[1] == GameState[2]){//Top row
-
+            if(GameState[0] != "null"){
+                //do action
+                //I will need to do this or these statements will get picked up from the starting state.
+                System.out.println("Test");
+            }
         }
         if(GameState[3] == GameState[4] && GameState[4] == GameState[5]){//Middle row
-
+            if(GameState[3] != "null"){
+                
+            }
         }
         if(GameState[6] == GameState[7] && GameState[7] == GameState[8]){//Bottom row
-
+            if(GameState[6] != "null"){
+                
+            }
         }
         /** Columns */
         if(GameState[0] == GameState[3] && GameState[3] == GameState[6]){//Left column
-
+            if(GameState[0] != "null"){
+                
+            }
         }
         if(GameState[1] == GameState[4] && GameState[4] == GameState[7]){//Middle column
-
+            if(GameState[1] != "null"){
+                
+            }
         }
         if(GameState[2] == GameState[5] && GameState[5] == GameState[8]){//Right column
-
+            if(GameState[2] != "null"){
+                
+            }
         }
         /** Diagonal */
         if(GameState[0] == GameState[4] && GameState[4] == GameState[8]){//Diagonal (right)
-
+            if(GameState[0] != "null"){
+                
+            }
         }
         if(GameState[2] == GameState[4] && GameState[4] == GameState[6]){//Diagonal (left)
-
+            if(GameState[2] != "null"){
+                
+            }
         }
+
+        /* 
+        Uncomment if you wish to print out the current state of the game when this method is called.
+
+        for(int i = 0; i < GameState.length; i++){
+            System.out.print(GameState[i] + " ");
+            if(i == 2 || i == 5){
+                System.out.println();
+            }
+        }
+        */
         
     }
-
 }

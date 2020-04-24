@@ -7,11 +7,6 @@
  * 
  */
 
- //The next step for this project is to setup the graphics.
- //For a start, the best way is to make the program launch and the game starts (so all that is shown is the game board)
- //Then you play a game, and the game ends.
- //You can worry about making it look nice, adding menus, and everything else once the base game is completed.
-
 import javax.swing.*;
 import javax.swing.border.*;
 
@@ -24,12 +19,16 @@ public class TicTacToe extends JPanel{
 
     public TicTacToe(){
         JPanel panel = new JPanel();
-        panel.setSize(620, 620);
-        //JLabel label = new JLabel("Test Label!");
-        //panel.add(label);
+        panel.setSize(600, 600);
+
         add(panel);
     }
 
+    /** This method is called at the start of the program, then anytime the window is resized or interacted with.
+        I will need to take that into consideration when planning how to draw the moves.
+        At the moment i'm thinking that i'll draw the GameState[] array onto the board, so even if its redrawn
+        There isnt a problem (i.e dont draw anything in the square if its null, draw X if X ... so on.)
+     */
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
@@ -82,11 +81,16 @@ public class TicTacToe extends JPanel{
         JFrame frame = new JFrame("Tic Tac Toe");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(600, 600);
- 
-        //JLabel label = new JLabel("Test Label!");
+
+        frame.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                System.out.println(e.getX() + "," + e.getY());
+            }
+        });
+
         frame.getContentPane().add(new TicTacToe());
  
-        //frame.pack();
         frame.setVisible(true);
     }
 

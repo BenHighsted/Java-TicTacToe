@@ -17,6 +17,18 @@ import java.util.Random;
 
 public class TicTacToe extends JPanel{
 
+    public static String[] GameState = {
+        "X", "null", "null", 
+        "null", "null", "null", 
+        "null", "null", "null"
+    }; 
+
+    public static String[] GamePositions = {
+        "20, 20", "20, 20", "20, 20", 
+        "20, 20", "20, 20", "20, 20", 
+        "20, 20", "20, 20", "20, 20"
+    };
+
     public TicTacToe(){
         JPanel panel = new JPanel();
         panel.setSize(600, 600);
@@ -33,6 +45,7 @@ public class TicTacToe extends JPanel{
         super.paintComponent(g);
 
         drawGameBoard(g);
+        g.drawOval(0,0,50,50);
     }
 
     public void drawGameBoard(Graphics g){
@@ -42,6 +55,26 @@ public class TicTacToe extends JPanel{
         /* Vertical lines*/
         g.drawLine(200, 20, 200, 560);
         g.drawLine(400, 20, 400, 560);
+
+        for(int i = 0; i < 9; i++){
+            if(GameState[i] == "X"){
+                DrawX(g, i);
+            }else if(GameState[i] == "O"){
+                DrawO(g, i);
+            }
+        }
+
+    }
+
+    // NOW THINKING ILL USE ACTUAL IMAGES RATHER THAN DRAWING IF POSSIBLE.
+    public static void DrawX(Graphics g, int position){
+        String[] location = GamePositions[position].split(", ");
+        System.out.println(location[0]);
+
+    }
+
+    public static void DrawO(Graphics g, int position){
+        
     }
 
     public static void main(String[] args){
@@ -50,12 +83,6 @@ public class TicTacToe extends JPanel{
 
     public static void newGame(){
         int Move = 0;
-
-        String[] GameState = {
-        "X", "X", "X", 
-        "null", "null", "null", 
-        "null", "null", "null"}; //Thinking i'll use this array to hold the state of the game.
-        //With this i can say that GameState[0] == GameState[4] == GameState[8] is a game over (3 in a row)
         
         boolean playerOneTurn = firstMove();
 
@@ -85,7 +112,8 @@ public class TicTacToe extends JPanel{
         frame.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                System.out.println(e.getX() + "," + e.getY());
+                System.out.println(e.getX() + ", " + e.getY());
+                frame.repaint();
             }
         });
 

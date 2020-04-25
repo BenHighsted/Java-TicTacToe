@@ -12,7 +12,7 @@ import javax.swing.border.*;
 
 import java.awt.*;
 import java.awt.event.*;
-
+import java.util.Optional;
 import java.util.Random;
 
 public class TicTacToe extends JPanel{
@@ -33,7 +33,9 @@ public class TicTacToe extends JPanel{
         "012", "345", "678", "036", "147", "258", "048", "246"
     };
 
-    public static int Move = 0;
+    public static String Winner = "null";
+
+    public static int Move = 0, winningNumber = 0;
     public static boolean playerOneTurn = true, victory = false;
 
     public TicTacToe(){
@@ -50,6 +52,8 @@ public class TicTacToe extends JPanel{
     }
 
     public void drawGameBoard(Graphics g){
+        g.setColor(Color.BLACK);
+
         /* Horizontal lines */
         g.drawLine(20, 180, 580, 180);
         g.drawLine(20, 380, 580, 380);
@@ -59,18 +63,28 @@ public class TicTacToe extends JPanel{
 
         for(int i = 0; i < 9; i++){
             if(GameState[i] == "X"){
-                DrawX(g, i);
+                DrawX(g, i, false);
             }else if(GameState[i] == "O"){
-                DrawO(g, i);
+                DrawO(g, i, false);
             }
         }
 
         if(victory == true){
-
+            String[] winnerLocations = VictoryPositions[winningNumber].split("");
+            for(int i = 0; i < winnerLocations.length; i++){
+                if(Winner == "X"){
+                    DrawX(g, Integer.parseInt(winnerLocations[i]), true);
+                }else{
+                    DrawO(g, Integer.parseInt(winnerLocations[i]), true);
+                }
+            }
         }
     }
 
-    public static void DrawX(Graphics g, int position){
+    public static void DrawX(Graphics g, int position, boolean victory){
+        if(victory == true){
+            g.setColor(Color.RED);
+        }
         int xoffset = 62, yoffset = 60;
         String[] location = GamePositions[position].split(", "); //location[0] for x, location[1] for y
 
@@ -81,7 +95,10 @@ public class TicTacToe extends JPanel{
         Integer.parseInt(location[0]) - xoffset, (Integer.parseInt(location[1]) - 10) + yoffset);
     }
 
-    public static void DrawO(Graphics g, int position){
+    public static void DrawO(Graphics g, int position, boolean victory){
+        if(victory == true){
+            g.setColor(Color.RED);
+        }
         int size = 125;
         int xoffset = 62, yoffset = 75;//the circle is not drawn around the center point, it is the position of the top left square.
         String[] location = GamePositions[position].split(", "); //location[0] for x, location[1] for y
@@ -89,13 +106,13 @@ public class TicTacToe extends JPanel{
     }
 
     public static void main(String[] args){
-        newGame();//once you have a GUI make a button 'New Game' that calls this.
+        newGame();
     }
 
     public static void newGame(){
         //boolean playerOneTurn = firstMove(); for now its just going to be local (one pc) so this isnt used, but in the future it will be.
 
-        setUpGUI();//once all the game variables are set up, we initiate the GUI.
+        setUpGUI();
     }
 
     public static boolean firstMove(){
@@ -139,11 +156,10 @@ public class TicTacToe extends JPanel{
         frame.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                System.out.println(e.getX() + ", " + e.getY());
+                //System.out.println(e.getX() + ", " + e.getY());
                 if(Move <= 9){
                     userClick(e.getX(), e.getY());
                 }
-
                 frame.repaint();
             }
         });
@@ -156,58 +172,106 @@ public class TicTacToe extends JPanel{
     public static void checkWinConditions(String[] GameState){
         /** Rows */
         if(GameState[0] == GameState[1] && GameState[1] == GameState[2]){//Top row
-            if(GameState[0] != "null"){
+            if(GameState[0] == "X"){
                 victory = true;
+                Winner = "X";
+                winningNumber = 0;
+            }else if(GameState[0] == "O"){
+                victory = true;
+                Winner = "O";
+                winningNumber = 0;
             }
         }
         if(GameState[3] == GameState[4] && GameState[4] == GameState[5]){//Middle row
-            if(GameState[3] != "null"){
+            if(GameState[3] == "X"){
                 victory = true;
+                Winner = "X";
+                winningNumber = 1;
+            }else if(GameState[3] == "O"){
+                victory = true;
+                Winner = "O";
+                winningNumber = 1;
             }
         }
         if(GameState[6] == GameState[7] && GameState[7] == GameState[8]){//Bottom row
-            if(GameState[6] != "null"){
+            if(GameState[6] == "X"){
                 victory = true;
+                Winner = "X";
+                winningNumber = 2;
+            }else if(GameState[6] == "O"){
+                victory = true;
+                Winner = "O";
+                winningNumber = 2;
             }
         }
         /** Columns */
         if(GameState[0] == GameState[3] && GameState[3] == GameState[6]){//Left column
-            if(GameState[0] != "null"){
+            if(GameState[0] == "X"){
                 victory = true;
+                Winner = "X";
+                winningNumber = 3;
+            }else if(GameState[0] == "O"){
+                victory = true;
+                Winner = "O";
+                winningNumber = 3;
             }
         }
         if(GameState[1] == GameState[4] && GameState[4] == GameState[7]){//Middle column
-            if(GameState[1] != "null"){
+            if(GameState[1] == "X"){
                 victory = true;
+                Winner = "X";
+                winningNumber = 4;
+            }else if(GameState[1] == "O"){
+                victory = true;
+                Winner = "O";
+                winningNumber = 4;
             }
         }
         if(GameState[2] == GameState[5] && GameState[5] == GameState[8]){//Right column
-            if(GameState[2] != "null"){
+            if(GameState[2] == "X"){
                 victory = true;
+                Winner = "X";
+                winningNumber = 5;
+            }else if(GameState[2] == "O"){
+                victory = true;
+                Winner = "O";
+                winningNumber = 5;
             }
         }
         /** Diagonal */
         if(GameState[0] == GameState[4] && GameState[4] == GameState[8]){//Diagonal (right)
-            if(GameState[0] != "null"){
+            if(GameState[0] == "X"){
                 victory = true;
+                Winner = "X";
+                winningNumber = 6;
+            }else if(GameState[0] == "O"){
+                victory = true;
+                Winner = "O";
+                winningNumber = 6;
             }
-        }
-        if(GameState[2] == GameState[4] && GameState[4] == GameState[6]){//Diagonal (left)
-            if(GameState[2] != "null"){
+        }if(GameState[2] == GameState[4] && GameState[4] == GameState[6]){//Diagonal (left)
+            if(GameState[2] == "X"){
                 victory = true;
+                Winner = "X";
+                winningNumber = 7;
+            }else if(GameState[2] == "O"){
+                victory = true;
+                Winner = "O";
+                winningNumber = 7;
             }
         }
 
         /* 
         Uncomment if you wish to print out the current state of the game when this method is called.
-
+        */
         for(int i = 0; i < GameState.length; i++){
             System.out.print(GameState[i] + " ");
             if(i == 2 || i == 5){
                 System.out.println();
             }
         }
-        */
+        System.out.println();
+        //*/
         
     }
 }

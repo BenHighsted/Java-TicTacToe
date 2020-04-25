@@ -29,7 +29,12 @@ public class TicTacToe extends JPanel{
         "100, 480", "300, 480", "500, 480"
     };
 
+    public static String[] VictoryPositions = {
+        "012", "345", "678", "036", "147", "258", "048", "246"
+    };
+
     public static int Move = 0;
+    public static boolean playerOneTurn = true, victory = false;
 
     public TicTacToe(){
         JPanel panel = new JPanel();
@@ -38,12 +43,6 @@ public class TicTacToe extends JPanel{
         add(panel);
     }
 
-    /** 
-        This method is called at the start of the program, then anytime the window is resized or interacted with.
-        I will need to take that into consideration when planning how to draw the moves.
-        At the moment i'm thinking that i'll draw the GameState[] array onto the board, so even if its redrawn
-        There isnt a problem (i.e dont draw anything in the square if its null, draw X if X ... so on.)
-     */
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
@@ -66,18 +65,20 @@ public class TicTacToe extends JPanel{
             }
         }
 
+        if(victory == true){
+
+        }
     }
 
-    // NOW THINKING ILL USE ACTUAL IMAGES RATHER THAN DRAWING IF POSSIBLE.
     public static void DrawX(Graphics g, int position){
         int xoffset = 62, yoffset = 60;
         String[] location = GamePositions[position].split(", "); //location[0] for x, location[1] for y
-        //NOTE FOR X! This is the center point of the two lines that need to be drawn
 
-        g.drawLine(Integer.parseInt(location[0]) - xoffset, (Integer.parseInt(location[1]) - 10) - yoffset, Integer.parseInt(location[0]) + xoffset, (Integer.parseInt(location[1]) - 10) + yoffset);
+        g.drawLine(Integer.parseInt(location[0]) - xoffset, (Integer.parseInt(location[1]) - 10) - yoffset, 
+        Integer.parseInt(location[0]) + xoffset, (Integer.parseInt(location[1]) - 10) + yoffset);
 
-        g.drawLine(Integer.parseInt(location[0]) + xoffset, (Integer.parseInt(location[1]) - 10) - yoffset, Integer.parseInt(location[0]) - xoffset, (Integer.parseInt(location[1]) - 10) + yoffset);
-
+        g.drawLine(Integer.parseInt(location[0]) + xoffset, (Integer.parseInt(location[1]) - 10) - yoffset, 
+        Integer.parseInt(location[0]) - xoffset, (Integer.parseInt(location[1]) - 10) + yoffset);
     }
 
     public static void DrawO(Graphics g, int position){
@@ -92,10 +93,7 @@ public class TicTacToe extends JPanel{
     }
 
     public static void newGame(){
-        boolean playerOneTurn = firstMove();
-
-        //This is here currently just to test all the states. Will need to be called after every move when the GUI is set up.
-        checkWinConditions(GameState);
+        //boolean playerOneTurn = firstMove(); for now its just going to be local (one pc) so this isnt used, but in the future it will be.
 
         setUpGUI();//once all the game variables are set up, we initiate the GUI.
     }
@@ -112,6 +110,27 @@ public class TicTacToe extends JPanel{
         }
     }
 
+    public static void userClick(int x, int y){
+        for(int i = 0; i < GamePositions.length; i++){
+            String[] location = GamePositions[i].split(", ");
+            if(GameState[i] == "null" && victory == false){
+                if(x > Integer.parseInt(location[0]) - 100 && x < Integer.parseInt(location[0]) + 100 
+                && y > Integer.parseInt(location[1]) - 100 && y < Integer.parseInt(location[1]) + 100){
+                    if(playerOneTurn == true){
+                        GameState[i] = "X";
+                        playerOneTurn = false;
+                        Move++;
+                    }else{
+                        GameState[i] = "O";
+                        playerOneTurn = true;
+                        Move++;
+                    }
+                    checkWinConditions(GameState);
+                }
+            }
+        }
+    }
+
     public static void setUpGUI() {
         JFrame frame = new JFrame("Tic Tac Toe");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -121,19 +140,15 @@ public class TicTacToe extends JPanel{
             @Override
             public void mousePressed(MouseEvent e) {
                 System.out.println(e.getX() + ", " + e.getY());
-                if(Move % 2 == 0){
-                    GameState[Move] = "O";
-                }else{
-                    GameState[Move] = "X";
+                if(Move <= 9){
+                    userClick(e.getX(), e.getY());
                 }
 
-                Move++;
                 frame.repaint();
             }
         });
 
         frame.getContentPane().add(new TicTacToe());
- 
         frame.setVisible(true);
     }
 
@@ -142,46 +157,44 @@ public class TicTacToe extends JPanel{
         /** Rows */
         if(GameState[0] == GameState[1] && GameState[1] == GameState[2]){//Top row
             if(GameState[0] != "null"){
-                //do action
-                //I will need to do this or these statements will get picked up from the starting state.
-                System.out.println("Test");
+                victory = true;
             }
         }
         if(GameState[3] == GameState[4] && GameState[4] == GameState[5]){//Middle row
             if(GameState[3] != "null"){
-                
+                victory = true;
             }
         }
         if(GameState[6] == GameState[7] && GameState[7] == GameState[8]){//Bottom row
             if(GameState[6] != "null"){
-                
+                victory = true;
             }
         }
         /** Columns */
         if(GameState[0] == GameState[3] && GameState[3] == GameState[6]){//Left column
             if(GameState[0] != "null"){
-                
+                victory = true;
             }
         }
         if(GameState[1] == GameState[4] && GameState[4] == GameState[7]){//Middle column
             if(GameState[1] != "null"){
-                
+                victory = true;
             }
         }
         if(GameState[2] == GameState[5] && GameState[5] == GameState[8]){//Right column
             if(GameState[2] != "null"){
-                
+                victory = true;
             }
         }
         /** Diagonal */
         if(GameState[0] == GameState[4] && GameState[4] == GameState[8]){//Diagonal (right)
             if(GameState[0] != "null"){
-                
+                victory = true;
             }
         }
         if(GameState[2] == GameState[4] && GameState[4] == GameState[6]){//Diagonal (left)
             if(GameState[2] != "null"){
-                
+                victory = true;
             }
         }
 

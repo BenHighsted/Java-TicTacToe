@@ -24,9 +24,9 @@ public class TicTacToe extends JPanel{
     }; 
 
     public static String[] GamePositions = {
-        "100, 100", "300, 100", "500, 100", 
-        "100, 300", "300, 300", "500, 300", 
-        "100, 500", "300, 500", "500, 500"
+        "100, 105", "300, 105", "500, 105", 
+        "100, 295", "300, 295", "500, 295", 
+        "100, 480", "300, 480", "500, 480"
     };
 
     public static int Move = 0;
@@ -48,10 +48,6 @@ public class TicTacToe extends JPanel{
         super.paintComponent(g);
 
         drawGameBoard(g);
-        //x offset = 62
-        //y offset = 80
-        /*g.drawOval(238, 220, 125, 125);
-        g.drawOval(50, 30, 125, 125);*/
     }
 
     public void drawGameBoard(Graphics g){
@@ -74,15 +70,21 @@ public class TicTacToe extends JPanel{
 
     // NOW THINKING ILL USE ACTUAL IMAGES RATHER THAN DRAWING IF POSSIBLE.
     public static void DrawX(Graphics g, int position){
-        int size = 125;
-        int xoffset = 62, yoffset = 80;
+        int xoffset = 62, yoffset = 60;
         String[] location = GamePositions[position].split(", "); //location[0] for x, location[1] for y
-        g.drawOval(Integer.parseInt(location[0]) - xoffset, Integer.parseInt(location[1]) - yoffset, size, size);
+        //NOTE FOR X! This is the center point of the two lines that need to be drawn
+
+        g.drawLine(Integer.parseInt(location[0]) - xoffset, (Integer.parseInt(location[1]) - 10) - yoffset, Integer.parseInt(location[0]) + xoffset, (Integer.parseInt(location[1]) - 10) + yoffset);
+
+        g.drawLine(Integer.parseInt(location[0]) + xoffset, (Integer.parseInt(location[1]) - 10) - yoffset, Integer.parseInt(location[0]) - xoffset, (Integer.parseInt(location[1]) - 10) + yoffset);
 
     }
 
     public static void DrawO(Graphics g, int position){
-        
+        int size = 125;
+        int xoffset = 62, yoffset = 75;//the circle is not drawn around the center point, it is the position of the top left square.
+        String[] location = GamePositions[position].split(", "); //location[0] for x, location[1] for y
+        g.drawOval(Integer.parseInt(location[0]) - xoffset, Integer.parseInt(location[1]) - yoffset, size, size);
     }
 
     public static void main(String[] args){
@@ -119,7 +121,12 @@ public class TicTacToe extends JPanel{
             @Override
             public void mousePressed(MouseEvent e) {
                 System.out.println(e.getX() + ", " + e.getY());
-                GameState[Move] = "X";
+                if(Move % 2 == 0){
+                    GameState[Move] = "O";
+                }else{
+                    GameState[Move] = "X";
+                }
+
                 Move++;
                 frame.repaint();
             }

@@ -18,16 +18,18 @@ import java.util.Random;
 public class TicTacToe extends JPanel{
 
     public static String[] GameState = {
-        "X", "null", "null", 
+        "null", "null", "null", 
         "null", "null", "null", 
         "null", "null", "null"
     }; 
 
     public static String[] GamePositions = {
-        "20, 20", "20, 20", "20, 20", 
-        "20, 20", "20, 20", "20, 20", 
-        "20, 20", "20, 20", "20, 20"
+        "100, 100", "300, 100", "500, 100", 
+        "100, 300", "300, 300", "500, 300", 
+        "100, 500", "300, 500", "500, 500"
     };
+
+    public static int Move = 0;
 
     public TicTacToe(){
         JPanel panel = new JPanel();
@@ -36,7 +38,8 @@ public class TicTacToe extends JPanel{
         add(panel);
     }
 
-    /** This method is called at the start of the program, then anytime the window is resized or interacted with.
+    /** 
+        This method is called at the start of the program, then anytime the window is resized or interacted with.
         I will need to take that into consideration when planning how to draw the moves.
         At the moment i'm thinking that i'll draw the GameState[] array onto the board, so even if its redrawn
         There isnt a problem (i.e dont draw anything in the square if its null, draw X if X ... so on.)
@@ -45,7 +48,10 @@ public class TicTacToe extends JPanel{
         super.paintComponent(g);
 
         drawGameBoard(g);
-        g.drawOval(0,0,50,50);
+        //x offset = 62
+        //y offset = 80
+        /*g.drawOval(238, 220, 125, 125);
+        g.drawOval(50, 30, 125, 125);*/
     }
 
     public void drawGameBoard(Graphics g){
@@ -68,8 +74,10 @@ public class TicTacToe extends JPanel{
 
     // NOW THINKING ILL USE ACTUAL IMAGES RATHER THAN DRAWING IF POSSIBLE.
     public static void DrawX(Graphics g, int position){
-        String[] location = GamePositions[position].split(", ");
-        System.out.println(location[0]);
+        int size = 125;
+        int xoffset = 62, yoffset = 80;
+        String[] location = GamePositions[position].split(", "); //location[0] for x, location[1] for y
+        g.drawOval(Integer.parseInt(location[0]) - xoffset, Integer.parseInt(location[1]) - yoffset, size, size);
 
     }
 
@@ -82,8 +90,6 @@ public class TicTacToe extends JPanel{
     }
 
     public static void newGame(){
-        int Move = 0;
-        
         boolean playerOneTurn = firstMove();
 
         //This is here currently just to test all the states. Will need to be called after every move when the GUI is set up.
@@ -113,6 +119,8 @@ public class TicTacToe extends JPanel{
             @Override
             public void mousePressed(MouseEvent e) {
                 System.out.println(e.getX() + ", " + e.getY());
+                GameState[Move] = "X";
+                Move++;
                 frame.repaint();
             }
         });

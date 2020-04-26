@@ -43,11 +43,22 @@ public class TicTacToe extends JPanel{
 
         JPanel gameBoard = new JPanel();
         gameBoard.setPreferredSize(new Dimension(600, 580));
-        gameBoard.setOpaque(false);
+        gameBoard.setOpaque(false);//set all the panels to transparent so they have no background
 
         JPanel controller = new JPanel();
         controller.setPreferredSize(new Dimension(200, 580));
         controller.setOpaque(false);
+
+        JButton newGame = new JButton();
+        newGame.setText("New Game");
+        controller.add(newGame);
+
+        newGame.addActionListener(new ActionListener() { 
+            public void actionPerformed(ActionEvent e) { 
+                resetValues();
+                newGame();
+            } 
+        });
 
         mainPanel.add(gameBoard);
         mainPanel.add(controller);
@@ -127,6 +138,15 @@ public class TicTacToe extends JPanel{
         //boolean playerOneTurn = firstMove(); for now its just going to be local (one pc) so this isnt used, but in the future it will be.
 
         setUpGUI();
+    }
+
+    public static void resetValues(){
+        for(int i = 0; i < GameState.length; i++){
+            GameState[i] = "null";
+        }
+        Winner = "null";
+        winningNumber = 0;
+        victory = false;
     }
 
     public static boolean firstMove(){

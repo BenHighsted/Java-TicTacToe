@@ -37,6 +37,11 @@ public class TicTacToe extends JPanel{
     public static String Winner = "null";
     public static int Move = 0, winningNumber = 0;
     public static boolean playerOneTurn = true, victory = false;
+    public static JLabel playersTurn;
+
+    public static void main(String[] args){
+        newGame();//At the moment starts a game on launch. Can change this later.
+    }
 
     public TicTacToe(){
         JPanel mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -53,12 +58,27 @@ public class TicTacToe extends JPanel{
         newGame.setText("New Game");
         controller.add(newGame);
 
-        newGame.addActionListener(new ActionListener() { 
-            public void actionPerformed(ActionEvent e) { 
+        newGame.addActionListener(new ActionListener(){ 
+            public void actionPerformed(ActionEvent e){ 
                 resetValues();
                 newGame();
             } 
         });
+
+        JButton connect = new JButton();
+        connect.setText("Play Online");
+        controller.add(connect);
+
+        playersTurn = new JLabel();
+        playersTurn.setText("It is X's turn.");
+
+        connect.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+                //Call methods here to connect to another player
+            }
+        });
+
+        controller.add(playersTurn);
 
         mainPanel.add(gameBoard);
         mainPanel.add(controller);
@@ -103,6 +123,7 @@ public class TicTacToe extends JPanel{
                     DrawO(g, Integer.parseInt(winnerLocations[i]), true);
                 }
             }
+            playersTurn.setText(Winner + " wins!");
         }
     }
 
@@ -130,13 +151,8 @@ public class TicTacToe extends JPanel{
         g.drawOval(Integer.parseInt(location[0]) - xoffset, Integer.parseInt(location[1]) - yoffset, size, size);
     }
 
-    public static void main(String[] args){
-        newGame();
-    }
-
     public static void newGame(){
         //boolean playerOneTurn = firstMove(); for now its just going to be local (one pc) so this isnt used, but in the future it will be.
-
         setUpGUI();
     }
 
@@ -171,10 +187,12 @@ public class TicTacToe extends JPanel{
                         GameState[i] = "X";
                         playerOneTurn = false;
                         Move++;
+                        playersTurn.setText("It is O's turn.");
                     }else{
                         GameState[i] = "O";
                         playerOneTurn = true;
                         Move++;
+                        playersTurn.setText("It is X's turn.");
                     }
                     checkWinConditions(GameState);
                 }
@@ -311,8 +329,3 @@ public class TicTacToe extends JPanel{
         
     }
 }
-
-//Thinking the next step is to add a gui that has buttons to start a new game, display whos turn it is etc..
-//Then I can add an option to 'connect' to other players and work from there.
-
-//Either will extend out from the left or right of the board to add these, and maybe at the bottom or top for the status (i.e. it is your turn)

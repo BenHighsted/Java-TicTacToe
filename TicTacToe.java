@@ -12,6 +12,7 @@ import javax.swing.border.*;
 
 import java.awt.*;
 import java.awt.event.*;
+
 import java.util.Optional;
 import java.util.Random;
 
@@ -34,19 +35,32 @@ public class TicTacToe extends JPanel{
     };
 
     public static String Winner = "null";
-
     public static int Move = 0, winningNumber = 0;
     public static boolean playerOneTurn = true, victory = false;
 
     public TicTacToe(){
-        JPanel panel = new JPanel();
-        panel.setSize(600, 600);
+        JPanel mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-        add(panel);
+        JPanel gameBoard = new JPanel();
+        gameBoard.setPreferredSize(new Dimension(600, 580));
+        gameBoard.setOpaque(false);
+
+        JPanel controller = new JPanel();
+        controller.setPreferredSize(new Dimension(200, 580));
+        controller.setOpaque(false);
+
+        mainPanel.add(gameBoard);
+        mainPanel.add(controller);
+
+        mainPanel.setOpaque(false);
+
+        add(mainPanel);
+
     }
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+        g.drawLine(600, 0, 600, 600);
 
         drawGameBoard(g);
     }
@@ -131,8 +145,8 @@ public class TicTacToe extends JPanel{
         for(int i = 0; i < GamePositions.length; i++){
             String[] location = GamePositions[i].split(", ");
             if(GameState[i] == "null" && victory == false){
-                if(x > Integer.parseInt(location[0]) - 100 && x < Integer.parseInt(location[0]) + 100 
-                && y > Integer.parseInt(location[1]) - 100 && y < Integer.parseInt(location[1]) + 100){
+                if(x > Integer.parseInt(location[0]) - 90 && x < Integer.parseInt(location[0]) + 90 
+                && y > Integer.parseInt(location[1]) - 90 && y < Integer.parseInt(location[1]) + 90){
                     if(playerOneTurn == true){
                         GameState[i] = "X";
                         playerOneTurn = false;
@@ -151,7 +165,7 @@ public class TicTacToe extends JPanel{
     public static void setUpGUI() {
         JFrame frame = new JFrame("Tic Tac Toe");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(600, 600);
+        //frame.setSize(800, 600);
 
         frame.addMouseListener(new MouseAdapter() {
             @Override
@@ -165,6 +179,8 @@ public class TicTacToe extends JPanel{
         });
 
         frame.getContentPane().add(new TicTacToe());
+
+        frame.pack();
         frame.setVisible(true);
     }
 
@@ -263,7 +279,7 @@ public class TicTacToe extends JPanel{
 
         /* 
         Uncomment if you wish to print out the current state of the game when this method is called.
-        */
+        
         for(int i = 0; i < GameState.length; i++){
             System.out.print(GameState[i] + " ");
             if(i == 2 || i == 5){
@@ -271,7 +287,12 @@ public class TicTacToe extends JPanel{
             }
         }
         System.out.println();
-        //*/
+        */
         
     }
 }
+
+//Thinking the next step is to add a gui that has buttons to start a new game, display whos turn it is etc..
+//Then I can add an option to 'connect' to other players and work from there.
+
+//Either will extend out from the left or right of the board to add these, and maybe at the bottom or top for the status (i.e. it is your turn)

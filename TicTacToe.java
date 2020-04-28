@@ -65,8 +65,12 @@ public class TicTacToe extends JPanel{
             } 
         });
 
+        JButton host = new JButton();
+        host.setText("Host");
+        controller.add(host);
+
         JButton connect = new JButton();
-        connect.setText("Play Online");
+        connect.setText("Join");
         controller.add(connect);
 
         playersTurn = new JLabel();

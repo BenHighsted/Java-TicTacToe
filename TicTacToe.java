@@ -42,8 +42,9 @@ public class TicTacToe extends JPanel{
     public static int Move = 0, winningNumber = 0;
     public static boolean playerOneTurn = true, victory = false;
     public static JLabel playersTurn;
-    public static boolean running = true;
 
+    public static boolean onlinePlay = true;
+    public static boolean running = true;
     public static int port = 7770;
 
     public static void main(String[] args){
@@ -73,27 +74,29 @@ public class TicTacToe extends JPanel{
         });
 
         JButton host = new JButton();
-        host.setText("   Host   ");
+        host.setText("     Host     ");
         controller.add(host);
 
-        host.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e){
-                hostThread.start();
-            }
-        });
-
         JButton connect = new JButton();
-        connect.setText("   Join   ");
+        connect.setText("     Join     ");
         controller.add(connect);
 
         connect.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e){
                 connectThread.start();
+                host.setVisible(false);
+            }
+        });
+
+        host.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+                hostThread.start();
+                connect.setVisible(false);
             }
         });
 
         playersTurn = new JLabel();
-        playersTurn.setText("It is X's turn.");
+        playersTurn.setText("   It is X's turn.   ");
 
         controller.add(playersTurn);
 
@@ -103,7 +106,6 @@ public class TicTacToe extends JPanel{
         mainPanel.setOpaque(false);
 
         add(mainPanel);
-
     }
 
     public void paintComponent(Graphics g) {
@@ -348,15 +350,54 @@ public class TicTacToe extends JPanel{
 
 
     /** Methods related to connection */
+    static Thread hostThread = new Thread(){
+        Socket socket = null;
+        public void run(){
+            try{
+                ServerSocket serverSocket = new ServerSocket(port);
+                System.err.println("Waiting for someone to connect");
+                socket = serverSocket.accept();
+                System.err.println("Accepted connection on port " + port);
+                TCPConnect connect = new TCPConnect(socket);
+                connect.startReceiving();
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.err.println("\nUsage: java TCPExample <port> [host]");
+                running = false;
+            }
+        }
+    };
 
+    static Thread connectThread = new Thread(){
+        public void run(){
+            Socket socket = null;
+            try{
+                socket = new Socket("localhost", port);
+                System.err.println("Connected to" + "localhost " +  "on port " + port);
+                TCPConnect connect = new TCPConnect(socket);
+                connect.startSending();
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.err.println("\nUsage: java TCPExample <port> [host]");
+                running = false;
 
-    public void ConnectionSetup(Socket socket) throws Exception {
+            }
+        }
+    };
+}
+
+class TCPConnect{
+
+    private PrintWriter output;
+    private BufferedReader input;
+
+    public TCPConnect(Socket socket) throws Exception {
         output = new PrintWriter(socket.getOutputStream(), true);
         input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
     }
-    
+
     public void startReceiving() throws Exception {
-        while(true){
+        while(running){
             String line;
             System.err.println(">>THEM:");
             if ((line = input.readLine()) != null) {
@@ -374,7 +415,7 @@ public class TicTacToe extends JPanel{
     }
 
     public void startSending() throws Exception {
-        while(true){
+        while(running){
             Scanner stdin = new Scanner(System.in);
             System.err.println(">>YOU:");
             if (stdin.hasNextLine()) {
@@ -400,6 +441,7 @@ public class TicTacToe extends JPanel{
             playerOneTurn = true;
         }
 
+        
         System.out.println();
         for(int i = 0; i < 9; i++){
             System.out.print(GameState[i] + " ");
@@ -409,68 +451,6 @@ public class TicTacToe extends JPanel{
         }
         System.out.println();
 
-    }
-
-    static Thread hostThread = new Thread(){
-        Socket socket = null;
-        public void run(){
-            try{
-                ServerSocket serverSocket = new ServerSocket(port);
-                System.err.println("Waiting for someone to connect");
-                socket = serverSocket.accept();
-                System.err.println("Accepted connection on port " + port);
-                TCPExample example = new TCPExample(socket);
-                example.startReceiving();
-            } catch (Exception e) {
-                e.printStackTrace();
-                System.err.println("\nUsage: java TCPExample <port> [host]");
-            }
-        }
-    };
-
-    public static void Host(){
-        Socket socket = null;
-        try{
-            ServerSocket serverSocket = new ServerSocket(port);
-            System.err.println("Waiting for someone to connect");
-            socket = serverSocket.accept();
-            System.err.println("Accepted connection on port " + port);
-            TCPExample example = new TCPExample(socket);
-            example.startReceiving();
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("\nUsage: java TCPExample <port> [host]");
-        }
-    }
-
-    static Thread connectThread = new Thread(){
-        public void run(){
-            Socket socket = null;
-            try{
-                socket = new Socket("localhost", port);
-                System.err.println("Connected to" + "localhost " +  "on port " + port);
-                TCPExample example = new TCPExample(socket);
-                example.startSending();
-            } catch (Exception e) {
-                e.printStackTrace();
-                System.err.println("\nUsage: java TCPExample <port> [host]");
-                running = false;
-
-            }
-        }
-    };
-
-    public static void Connect(){
-        Socket socket = null;
-        try{
-            socket = new Socket("localhost", port);
-            System.err.println("Connected to" + "localhost " +  "on port " + port);
-            TCPExample example = new TCPExample(socket);
-            example.startSending();
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("\nUsage: java TCPExample <port> [host]");
-        }
     }
 
 }

@@ -42,6 +42,9 @@ public class TicTacToe extends JPanel{
     public static int Move = 0, winningNumber = 0;
     public static boolean playerOneTurn = true, victory = false;
     public static JLabel playersTurn;
+    public static boolean running = true;
+
+    public static int port = 7770;
 
     public static void main(String[] args){
         newGame();//At the moment starts a game on launch. Can change this later.
@@ -75,7 +78,7 @@ public class TicTacToe extends JPanel{
 
         host.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e){
-                //Call methods here to connect to another player
+                hostThread.start();
             }
         });
 
@@ -85,7 +88,7 @@ public class TicTacToe extends JPanel{
 
         connect.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e){
-                //Call methods here to connect to another player
+                connectThread.start();
             }
         });
 
@@ -408,6 +411,23 @@ public class TicTacToe extends JPanel{
 
     }
 
+    static Thread hostThread = new Thread(){
+        Socket socket = null;
+        public void run(){
+            try{
+                ServerSocket serverSocket = new ServerSocket(port);
+                System.err.println("Waiting for someone to connect");
+                socket = serverSocket.accept();
+                System.err.println("Accepted connection on port " + port);
+                TCPExample example = new TCPExample(socket);
+                example.startReceiving();
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.err.println("\nUsage: java TCPExample <port> [host]");
+            }
+        }
+    };
+
     public static void Host(){
         Socket socket = null;
         try{
@@ -422,6 +442,23 @@ public class TicTacToe extends JPanel{
             System.err.println("\nUsage: java TCPExample <port> [host]");
         }
     }
+
+    static Thread connectThread = new Thread(){
+        public void run(){
+            Socket socket = null;
+            try{
+                socket = new Socket("localhost", port);
+                System.err.println("Connected to" + "localhost " +  "on port " + port);
+                TCPExample example = new TCPExample(socket);
+                example.startSending();
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.err.println("\nUsage: java TCPExample <port> [host]");
+                running = false;
+
+            }
+        }
+    };
 
     public static void Connect(){
         Socket socket = null;

@@ -83,6 +83,7 @@ public class TicTacToe extends JPanel{
 
         connect.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e){
+                onlinePlay = true;
                 connectThread.start();
                 host.setVisible(false);
             }
@@ -90,6 +91,7 @@ public class TicTacToe extends JPanel{
 
         host.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e){
+                onlinePlay = true;
                 hostThread.start();
                 connect.setVisible(false);
             }
@@ -142,7 +144,7 @@ public class TicTacToe extends JPanel{
                     DrawO(g, Integer.parseInt(winnerLocations[i]), true);
                 }
             }
-            playersTurn.setText(Winner + " wins!");
+            playersTurn.setText("   " + Winner + " wins!   ");
         }
     }
 
@@ -172,6 +174,7 @@ public class TicTacToe extends JPanel{
 
     public static void newGame(){
         //boolean playerOneTurn = firstMove(); for now its just going to be local (one pc) so this isnt used, but in the future it will be.
+        resetValues();
         setUpGUI();
     }
 
@@ -182,6 +185,7 @@ public class TicTacToe extends JPanel{
         Winner = "null";
         winningNumber = 0;
         victory = false;
+        Move = 0;
     }
 
     public static boolean firstMove(){
@@ -206,12 +210,12 @@ public class TicTacToe extends JPanel{
                         GameState[i] = "X";
                         playerOneTurn = false;
                         Move++;
-                        playersTurn.setText("It is O's turn.");
+                        playersTurn.setText("   It is O's turn.   ");
                     }else{
                         GameState[i] = "O";
                         playerOneTurn = true;
                         Move++;
-                        playersTurn.setText("It is X's turn.");
+                        playersTurn.setText("   It is X's turn.   ");
                     }
                     checkWinConditions(GameState);
                 }
@@ -334,6 +338,10 @@ public class TicTacToe extends JPanel{
             }
         }
 
+        if(Move == 9 && victory == false){
+            playersTurn.setText("   Its a draw!   ");
+        }
+
         /* 
         Uncomment if you wish to print out the current state of the game when this method is called.
         
@@ -380,7 +388,6 @@ public class TicTacToe extends JPanel{
                 e.printStackTrace();
                 System.err.println("\nUsage: java TCPExample <port> [host]");
                 running = false;
-
             }
         }
     };

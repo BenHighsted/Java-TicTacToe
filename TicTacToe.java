@@ -43,8 +43,7 @@ public class TicTacToe extends JPanel{
     public static boolean playerOneTurn = true, victory = false;
     public static JLabel playersTurn;
 
-    public static boolean onlinePlay = true;
-    public static boolean running = true;
+    public static boolean onlinePlay = false, clientHost = false, clientConnect = false;
     public static int port = 7770;
 
     public static void main(String[] args){
@@ -83,17 +82,21 @@ public class TicTacToe extends JPanel{
 
         connect.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e){
-                onlinePlay = true;
                 connectThread.start();
                 host.setVisible(false);
+                onlinePlay = true;
+                playerOneTurn = false;
+                clientConnect = true;
             }
         });
 
         host.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e){
-                onlinePlay = true;
                 hostThread.start();
                 connect.setVisible(false);
+                onlinePlay = true;
+                playerOneTurn = true;
+                clientHost = true;
             }
         });
 
@@ -201,23 +204,48 @@ public class TicTacToe extends JPanel{
     }
 
     public static void userClick(int x, int y){
-        for(int i = 0; i < GamePositions.length; i++){
-            String[] location = GamePositions[i].split(", ");
-            if(GameState[i] == "null" && victory == false){
-                if(x > Integer.parseInt(location[0]) - 90 && x < Integer.parseInt(location[0]) + 90 
-                && y > Integer.parseInt(location[1]) - 90 && y < Integer.parseInt(location[1]) + 90){
-                    if(playerOneTurn == true){
-                        GameState[i] = "X";
-                        playerOneTurn = false;
-                        Move++;
-                        playersTurn.setText("   It is O's turn.   ");
-                    }else{
-                        GameState[i] = "O";
-                        playerOneTurn = true;
-                        Move++;
-                        playersTurn.setText("   It is X's turn.   ");
+        if(onlinePlay == false){
+            for(int i = 0; i < GamePositions.length; i++){
+                String[] location = GamePositions[i].split(", ");
+                if(GameState[i] == "null" && victory == false){
+                    if(x > Integer.parseInt(location[0]) - 90 && x < Integer.parseInt(location[0]) + 90 
+                    && y > Integer.parseInt(location[1]) - 90 && y < Integer.parseInt(location[1]) + 90){
+                        if(playerOneTurn == true){
+                            GameState[i] = "X";
+                            playerOneTurn = false;
+                            Move++;
+                            playersTurn.setText("   It is O's turn.   ");
+                        }else{
+                            GameState[i] = "O";
+                            playerOneTurn = true;
+                            Move++;
+                            playersTurn.setText("   It is X's turn.   ");
+                        }
+                        checkWinConditions(GameState);
                     }
-                    checkWinConditions(GameState);
+                }
+            }
+
+        }else{
+
+            for(int i = 0; i < GamePositions.length; i++){
+                String[] location = GamePositions[i].split(", ");
+                if(GameState[i] == "null" && victory == false){
+                    if(x > Integer.parseInt(location[0]) - 90 && x < Integer.parseInt(location[0]) + 90 
+                    && y > Integer.parseInt(location[1]) - 90 && y < Integer.parseInt(location[1]) + 90){
+                        if(playerOneTurn == true && host == true){
+                            GameState[i] = "X";
+                            playerOneTurn = false;
+                            Move++;
+                            playersTurn.setText("   It is O's turn.   ");
+                        }else if(playerOneTurn == true && connect == true){
+                            GameState[i] = "O";
+                            playerOneTurn = false;
+                            Move++;
+                            playersTurn.setText("   It is X's turn.   ");
+                        }
+                        checkWinConditions(GameState);
+                    }
                 }
             }
         }
@@ -371,7 +399,6 @@ public class TicTacToe extends JPanel{
             } catch (Exception e) {
                 e.printStackTrace();
                 System.err.println("\nUsage: java TCPExample <port> [host]");
-                running = false;
             }
         }
     };
@@ -384,10 +411,10 @@ public class TicTacToe extends JPanel{
                 System.err.println("Connected to" + "localhost " +  "on port " + port);
                 TCPConnect connect = new TCPConnect(socket);
                 connect.startSending();
+                connect.running = false;
             } catch (Exception e) {
                 e.printStackTrace();
                 System.err.println("\nUsage: java TCPExample <port> [host]");
-                running = false;
             }
         }
     };
@@ -397,6 +424,8 @@ class TCPConnect{
 
     private PrintWriter output;
     private BufferedReader input;
+
+    public boolean running = true;
 
     public TCPConnect(Socket socket) throws Exception {
         output = new PrintWriter(socket.getOutputStream(), true);

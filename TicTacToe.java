@@ -45,6 +45,7 @@ public class TicTacToe extends JPanel{
 
     public static boolean onlinePlay = false, clientHost = false, clientConnect = false;
     public static int port = 7770;
+    public static int onlineMove = 10;
 
     public static void main(String[] args){
         newGame();//At the moment starts a game on launch. Can change this later.
@@ -233,16 +234,10 @@ public class TicTacToe extends JPanel{
                 if(GameState[i] == "null" && victory == false){
                     if(x > Integer.parseInt(location[0]) - 90 && x < Integer.parseInt(location[0]) + 90 
                     && y > Integer.parseInt(location[1]) - 90 && y < Integer.parseInt(location[1]) + 90){
-                        if(playerOneTurn == true && host == true){
-                            GameState[i] = "X";
+                        if(playerOneTurn == true){
+                            onlineMove = i;
                             playerOneTurn = false;
                             Move++;
-                            playersTurn.setText("   It is O's turn.   ");
-                        }else if(playerOneTurn == true && connect == true){
-                            GameState[i] = "O";
-                            playerOneTurn = false;
-                            Move++;
-                            playersTurn.setText("   It is X's turn.   ");
                         }
                         checkWinConditions(GameState);
                     }
@@ -254,7 +249,6 @@ public class TicTacToe extends JPanel{
     public static void setUpGUI() {
         JFrame frame = new JFrame("Tic Tac Toe");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //frame.setSize(800, 600);
 
         frame.addMouseListener(new MouseAdapter() {
             @Override
@@ -384,11 +378,41 @@ public class TicTacToe extends JPanel{
         
     }
 
-
     /** Methods related to connection */
+
+    public static int getMove(){
+        //System.err.println("test");
+        return onlineMove;
+    }
+
+    public static void setMove(int move){
+        onlineMove = move;
+        //System.err.println("test2");
+    }
+
+    public static void updateGameState(int newChange){
+        if(playerOneTurn == true){
+            GameState[newChange] = "X";
+            playerOneTurn = false;
+        }else{
+            GameState[newChange] = "O";
+            playerOneTurn = true;
+        }
+        
+        System.err.println();
+        for(int i = 0; i < 9; i++){
+            System.err.print(GameState[i] + " ");
+            if(i == 2 || i == 5){
+                System.err.println();
+            }
+        }
+        System.err.println();
+    }
+
     static Thread hostThread = new Thread(){
         Socket socket = null;
         public void run(){
+            playerOneTurn = true;
             try{
                 ServerSocket serverSocket = new ServerSocket(port);
                 System.err.println("Waiting for someone to connect");
@@ -405,13 +429,13 @@ public class TicTacToe extends JPanel{
 
     static Thread connectThread = new Thread(){
         public void run(){
+            playerOneTurn = false;
             Socket socket = null;
             try{
                 socket = new Socket("localhost", port);
                 System.err.println("Connected to" + "localhost " +  "on port " + port);
                 TCPConnect connect = new TCPConnect(socket);
                 connect.startSending();
-                connect.running = false;
             } catch (Exception e) {
                 e.printStackTrace();
                 System.err.println("\nUsage: java TCPExample <port> [host]");
@@ -427,6 +451,8 @@ class TCPConnect{
 
     public boolean running = true;
 
+    public int clientMove = 10;
+
     public TCPConnect(Socket socket) throws Exception {
         output = new PrintWriter(socket.getOutputStream(), true);
         input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -435,58 +461,38 @@ class TCPConnect{
     public void startReceiving() throws Exception {
         while(running){
             String line;
-            System.err.println(">>THEM:");
+            //System.err.println(">>THEM:");
             if ((line = input.readLine()) != null) {
                 System.out.println(line);
-                updateGameState(line);
+                TicTacToe.updateGameState(Integer.parseInt(line));
             }
-            Scanner stdin = new Scanner(System.in);
-            System.err.println(">>YOU:");
-            if (stdin.hasNextLine()){
-                String input = stdin.nextLine();
-                updateGameState(input);
+            //Scanner stdin = new Scanner(System.in);
+            //System.err.println(">>YOU:");
+            if (TicTacToe.getMove() != 10) {
+                int input = TicTacToe.getMove();
+                TicTacToe.updateGameState(input);
                 output.println(input);
+                TicTacToe.setMove(10);
             }
         }
     }
 
     public void startSending() throws Exception {
         while(running){
-            Scanner stdin = new Scanner(System.in);
-            System.err.println(">>YOU:");
-            if (stdin.hasNextLine()) {
-                String input = stdin.nextLine();
-                updateGameState(input);
+            //Scanner stdin = new Scanner(System.in);
+            //System.err.println(">>YOU:");
+            if (TicTacToe.getMove() != 10) {
+                int input = TicTacToe.getMove();
+                TicTacToe.updateGameState(input);
                 output.println(input);
+                TicTacToe.setMove(10);
             }
             String line;
-            System.err.println(">>THEM:");
+            //System.err.println(">>THEM:");
             if ((line = input.readLine()) != null) {
                 System.out.println(line);
-                updateGameState(line);
+                TicTacToe.updateGameState(Integer.parseInt(line));
             }
         }
     }
-
-    public void updateGameState(String newChange){
-        if(playerOneTurn == true){
-            GameState[Integer.parseInt(newChange)] = "X";
-            playerOneTurn = false;
-        }else{
-            GameState[Integer.parseInt(newChange)] = "O";
-            playerOneTurn = true;
-        }
-
-        
-        System.out.println();
-        for(int i = 0; i < 9; i++){
-            System.out.print(GameState[i] + " ");
-            if(i == 2 || i == 5){
-                System.out.println();
-            }
-        }
-        System.out.println();
-
-    }
-
 }

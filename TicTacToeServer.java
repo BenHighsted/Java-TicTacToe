@@ -13,6 +13,8 @@ public class TicTacToeServer{
         "null", "null", "null"
     }; 
 
+    public static boolean playerOneTurn = true;//controls who the server is listening to (player one is true)
+
     public static void main(String[] args){
         try{
             new TicTacToeServer().startServer(Integer.parseInt(args[0]));
@@ -28,7 +30,7 @@ public class TicTacToeServer{
         System.err.println("Tic Tac Toe Server started");
 
         while (true){
-            if(clientCounter < 2){
+            if(clientCounter < 3){
                 ClientHandler ch = new ClientHandler(serverSocket.accept());
                 System.err.println("Accepted connection from " + ch);
 
@@ -52,10 +54,15 @@ public class TicTacToeServer{
     }
 
     public static void updateGameState(int position){
-        GameState[position] = "X";
-        //Will need if statement to know if it needs to be X or O, for now just X for testing.
+        if(playerOneTurn == true){
+            GameState[position] = "X";
+            playerOneTurn = false;
+        }else{
+            GameState[position] = "O";
+            playerOneTurn = true;
+        }
 
-        //prints overall gamestate
+        /* prints overall gamestate */
         for(int i = 0; i < GameState.length; i++){
             System.err.print(GameState[i] + " ");
             if(i == 2 || i == 5){
@@ -93,8 +100,17 @@ public class TicTacToeServer{
                 send("You are " + this + ".");
                 String line;
                 while ((line = input.readLine()) != null) {
-                    //sendAll(line, this);
-                    updateGameState(Integer.parseInt(line));
+
+                    if(playerOneTurn == true){
+                        if(this.equals(clients.get(0)) ){
+                            updateGameState(Integer.parseInt(line));
+                        }
+                    }else{
+                        if(this.equals(clients.get(1)) ){
+                            updateGameState(Integer.parseInt(line));
+                        }
+                    }
+
                 }
             }catch (IOException e){
                 e.printStackTrace();

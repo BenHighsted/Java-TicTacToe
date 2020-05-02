@@ -75,36 +75,17 @@ public class TicTacToe extends JPanel{
             } 
         });
 
-        /*
-        JButton host = new JButton();
-        host.setText("     Host     ");
-        controller.add(host);
-
         JButton connect = new JButton();
-        connect.setText("     Join     ");
+        connect.setText(" Connect ");
         controller.add(connect);
 
         connect.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e){
-                connectThread.start();
-                host.setVisible(false);
-                onlinePlay = true;
-                playerOneTurn = false;
-                clientConnect = true;
+                newGame.setVisible(false);
+                //onlinePlay = true;
+                Connect();
             }
         });
-
-        host.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e){
-                hostThread.start();
-                connect.setVisible(false);
-                onlinePlay = true;
-                playerOneTurn = true;
-                clientHost = true;
-            }
-        });
-
-        */
 
         playersTurn = new JLabel();
         playersTurn.setText("   It is X's turn.   ");
@@ -386,6 +367,22 @@ public class TicTacToe extends JPanel{
         }
         System.out.println();
         */
-        
     }
+
+    public static void Connect(){
+        try {
+            int port = 1803;
+            Socket socket = new Socket("localhost", port);
+
+            System.err.println("Connected to localhost on port " + port);
+
+            new ReadWrite(socket.getInputStream(), System.out).start();
+            new ReadWrite(System.in, socket.getOutputStream()).start();
+
+        }catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("\nUsage: java Client.java");
+        }
+    }
+
 }

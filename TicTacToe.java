@@ -47,7 +47,7 @@ public class TicTacToe extends JPanel{
     public static int port = 7770;
     public static int onlineMove = 10;
 
-    public static Graphics graphics;
+    public static String line = "1";
 
     public static void main(String[] args){
         newGame();//At the moment starts a game on launch. Can change this later.
@@ -82,7 +82,7 @@ public class TicTacToe extends JPanel{
         connect.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e){
                 newGame.setVisible(false);
-                //onlinePlay = true;
+                onlinePlay = true;
                 Connect();
             }
         });
@@ -105,15 +105,6 @@ public class TicTacToe extends JPanel{
         g.drawLine(600, 0, 600, 600);
 
         drawGameBoard(g);
-        setGraphicsComponent(g);
-    }
-
-    public static void setGraphicsComponent(Graphics g){
-        graphics = g;
-    }
-
-    public static Graphics getGraphicsComponent(){
-        return graphics;
     }
 
     public static void drawGameBoard(Graphics g){
@@ -172,7 +163,6 @@ public class TicTacToe extends JPanel{
     }
 
     public static void newGame(){
-        //boolean playerOneTurn = firstMove(); for now its just going to be local (one pc) so this isnt used, but in the future it will be.
         resetValues();
         setUpGUI();
     }
@@ -228,11 +218,11 @@ public class TicTacToe extends JPanel{
                 if(GameState[i] == "null" && victory == false){
                     if(x > Integer.parseInt(location[0]) - 90 && x < Integer.parseInt(location[0]) + 90 
                     && y > Integer.parseInt(location[1]) - 90 && y < Integer.parseInt(location[1]) + 90){
-                        onlineMove = i;
-                        Move++;
+                        String input = Integer.toString(i);
+                        line = input;
+                        ReadWrite.output.println(input);
                     }
                     checkWinConditions(GameState);
-                    //drawGameBoard(graphics);
                 }
             }
         }
@@ -381,8 +371,31 @@ public class TicTacToe extends JPanel{
 
         }catch (Exception e) {
             e.printStackTrace();
-            System.err.println("\nUsage: java Client.java");
+            System.err.println("\nUsage: java TicTacToe.java");
         }
     }
+}
 
+class ReadWrite extends Thread{
+
+    private BufferedReader input;
+
+
+    /*
+        Using this output to communicate with the server
+    */
+    public static PrintWriter output;
+
+    public ReadWrite(InputStream input, OutputStream output) {
+        this.input = new BufferedReader(new InputStreamReader(input));
+        ReadWrite.output = new PrintWriter(output, true);
+    }
+
+    public void run(){
+        try{
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
 }

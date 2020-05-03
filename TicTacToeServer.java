@@ -6,6 +6,7 @@ public class TicTacToeServer{
 
     private static List<ClientHandler> clients = new LinkedList<ClientHandler>();
     public static int clientCounter = 0;
+    public static int port = 1803;
 
     public static String[] GameState = {
         "null", "null", "null", 
@@ -17,10 +18,9 @@ public class TicTacToeServer{
 
     public static void main(String[] args){
         try{
-            new TicTacToeServer().startServer(Integer.parseInt(args[0]));
+            new TicTacToeServer().startServer(port);
         }catch (Exception e){
             e.printStackTrace();
-            System.err.println("\nUsage: java TicTacToeServer <port>");
         }
     }
 
@@ -69,7 +69,7 @@ public class TicTacToeServer{
                 System.err.println();
             }
         }
-        System.out.println();
+        System.out.println("\n");
     }
 
     public static class ClientHandler extends Thread{

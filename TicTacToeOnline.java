@@ -1,5 +1,3 @@
-package Online;
-
 /**
  * 
  * This file is going to consist of all the TicTacToe content, except
@@ -196,6 +194,7 @@ class ReadWriteOnline extends Thread{
     public static boolean yourTurn = false;
     public static boolean victory = false;
     public static boolean showWinner = false;
+    public static int player;
 
     public ReadWriteOnline(InputStream input, OutputStream output) {
         this.input = new BufferedReader(new InputStreamReader(input));
@@ -210,12 +209,16 @@ class ReadWriteOnline extends Thread{
                 if(!victory){
                     if(line.equals("Player1")){
                         System.err.println("You are Player1!");
+                        player = 1;
+
                         token = "X";
                         token2 = "O";
                         yourTurn = true;
                         TicTacToeOnline.playersTurn.setText("It is your turn.");
                     }else if(line.equals("Player2")){
                         System.err.println("You are Player2!");
+                        player = 2;
+
                         token = "O";
                         token2 = "X";
                         yourTurn = false;
@@ -234,15 +237,25 @@ class ReadWriteOnline extends Thread{
                         }
                         TicTacToeOnline.frame.repaint();
                     }
-                }else{//victory pos, then winner token
+                }else{
                     if(count == 0){
                         TicTacToeOnline.victoryPos = Integer.parseInt(line);
                         count++;
                     }else if(count == 1){
                         if(line.equals("X")){
                             TicTacToeOnline.Winner = "X";
+                            if(player == 1){
+                                TicTacToeOnline.playersTurn.setText("You win!");
+                            }else{
+                                TicTacToeOnline.playersTurn.setText("You lose");
+                            }
                         }else{
                             TicTacToeOnline.Winner = "O";
+                            if(player == 2){
+                                TicTacToeOnline.playersTurn.setText("You win!");
+                            }else{
+                                TicTacToeOnline.playersTurn.setText("You lose");
+                            }
                         }
                         count++;
                         showWinner = true;

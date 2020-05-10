@@ -35,6 +35,8 @@ public class TicTacToeOnline extends JPanel
 
     public static String Winner = "null";
 
+    public static JLabel moveHistory = "";
+
     public TicTacToeOnline(){
         JPanel mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
@@ -175,6 +177,17 @@ public class TicTacToeOnline extends JPanel
             ReadWriteOnline.output.println(send);
         }
     }
+
+    public static void updateGameHistory(int position){
+        int player;
+        String token;
+        
+        player = ReadWriteOnline.player;
+        token = ReadWriteOnline.token;
+
+        //need to work out a way to add all game history to a JLabel next
+    }
+
 }
 
 class ReadWriteOnline extends Thread{

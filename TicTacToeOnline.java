@@ -35,7 +35,8 @@ public class TicTacToeOnline extends JPanel
 
     public static String Winner = "null";
 
-    public static JLabel moveHistory = "";
+    public static JLabel moveHistory;
+    public static String[] moveList = new String[9]; 
 
     public TicTacToeOnline(){
         JPanel mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -138,6 +139,10 @@ public class TicTacToeOnline extends JPanel
         frame.pack();
         frame.setVisible(true);
 
+        for(int i = 0; i < moveList.length; i++){
+            moveList[i] = null;
+        }
+
         try {
             int port = 1804;
             Socket socket = new Socket("localhost", port);
@@ -175,19 +180,28 @@ public class TicTacToeOnline extends JPanel
         {
             String send = Integer.toString(position);
             ReadWriteOnline.output.println(send);
+
         }
     }
 
-    public static void updateGameHistory(int position){
+    public static void updateGameHistory(int position, int move, boolean turn){
         int player;
         String token;
+        String moves = "<html>";
         
         player = ReadWriteOnline.player;
         token = ReadWriteOnline.token;
 
-        //need to work out a way to add all game history to a JLabel next
-    }
+        moveList[move] = "Player_" + player + " just played " + token + " in position " + position;
 
+        for(int i = 0; i < moveList.length; i++){
+            if(moveList[i] != null){
+                moves += moveList[i] + "<br>";
+            }
+        }
+        moves += "</html>";
+        moveHistory.setText(moves);
+    }
 }
 
 class ReadWriteOnline extends Thread{
@@ -208,6 +222,7 @@ class ReadWriteOnline extends Thread{
     public static boolean victory = false;
     public static boolean showWinner = false;
     public static int player;
+    public static int move = 0;
 
     public ReadWriteOnline(InputStream input, OutputStream output) {
         this.input = new BufferedReader(new InputStreamReader(input));
@@ -231,7 +246,6 @@ class ReadWriteOnline extends Thread{
                     }else if(line.equals("Player2")){
                         System.err.println("You are Player2!");
                         player = 2;
-
                         token = "O";
                         token2 = "X";
                         yourTurn = false;
@@ -241,10 +255,14 @@ class ReadWriteOnline extends Thread{
                     }else{
                         if(yourTurn){
                             GameState[Integer.parseInt(line)] = token;
+                            move++;
+                            TicTacToeOnline.updateGameHistory(Integer.parseInt(line), move, true);
                             yourTurn = false;
                             TicTacToeOnline.playersTurn.setText("It is the opponents turn.");
                         }else{
                             GameState[Integer.parseInt(line)] = token2;
+                            move++;
+                            TicTacToeOnline.updateGameHistory(Integer.parseInt(line), move, false);
                             yourTurn = true;
                             TicTacToeOnline.playersTurn.setText("It is your turn.");
                         }
